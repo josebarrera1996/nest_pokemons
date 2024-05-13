@@ -1,0 +1,38 @@
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, /* HttpCode, HttpStatus  */ } from '@nestjs/common';
+import { PokemonService } from './pokemon.service';
+import { CreatePokemonDto } from './dtos/create-pokemon.dto';
+import { UpdatePokemonDto } from './dtos/update-pokemon.dto';
+import { ParseMongoIdPipe } from 'src/common/pipes/parse-mongo-id.pipe';
+import { PaginationDTO } from 'src/common/dtos/pagination.dto';
+
+@Controller('pokemons')
+export class PokemonController {
+  constructor(private readonly pokemonService: PokemonService) { }
+
+  @Post()
+  // @HttpCode(HttpStatus.CREATED) // Indicandao el código de respuesta
+  create(@Body() createPokemonDto: CreatePokemonDto) {
+    return this.pokemonService.create(createPokemonDto);
+  }
+
+  @Get()
+  findAll(@Query() paginationDto: PaginationDTO) {
+    console.log({ paginationDto });
+    return this.pokemonService.findAll(paginationDto);
+  }
+
+  @Get(':term')
+  findOne(@Param('term') term: string) {
+    return this.pokemonService.findOne(term);
+  }
+
+  @Patch(':term')
+  update(@Param('term') term: string, @Body() updatePokemonDto: UpdatePokemonDto) {
+    return this.pokemonService.update(term, updatePokemonDto);
+  }
+
+  @Delete(':id')
+  remove(@Param('id', ParseMongoIdPipe) id: string) {
+    return this.pokemonService.remove(id);
+  }
+}
